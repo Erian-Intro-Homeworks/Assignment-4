@@ -44,24 +44,73 @@ exports.read = function(req, res) {
 };
 
 /* Update a listing */
-exports.update = function(req, res) {
+exports.update = function(req, res) {////////////////////////////CHANGE Listing TO listing, CLARIFY FIRST
   var listing = req.listing;
 
   /* Replace the article's properties with the new properties found in req.body */
   /* save the coordinates (located in req.results if there is an address property) */
   /* Save the article */
+
+  Listing.findOneAndUpdate({ listing }, { req.body }, function(err, listing) {
+  if (err) throw err;
+
+  // we have the updated user returned to us
+  console.log(listing);
+  });
+
+
+  if(req.results) {
+    listing.coordinates = {
+      latitude: req.results.lat, 
+      longitude: req.results.lng
+    };
+  }
+
+  /* Then save the listing */
+  listing.save(function(err) {
+    if(err) {
+      console.log(err);
+      res.status(400).send(err);
+    } else {
+      res.json(listing);
+    }
+  });
+
 };
 
 /* Delete a listing */
-exports.delete = function(req, res) {
+exports.delete = function(req, res) {/////////////////////////////////
   var listing = req.listing;
 
   /* Remove the article */
+  Listing.find({ listing }, function(err, listing) {
+    if (err) throw err;
+
+    // delete him
+    listing.remove(function(err) {
+      if (err) throw err;
+
+      console.log('Listing successfully deleted!');
+    });
+  });
+  
+
+
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
-exports.list = function(req, res) {
-  /* Your code here */
+exports.list = function(req, res) {////////////////////////////////////////////////
+  
+  // get all the users
+  Listing.find({}, function(err, listing) {
+    if (err) throw err;
+
+    // object of all the users
+    console.log(listing);
+  });
+  
+
+
 };
 
 /* 
