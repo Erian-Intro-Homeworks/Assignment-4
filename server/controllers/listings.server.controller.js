@@ -51,23 +51,25 @@ exports.update = function(req, res) {////////////////////////////CHANGE Listing 
   /* save the coordinates (located in req.results if there is an address property) */
   /* Save the article */
 
-  Listing.findOneAndUpdate({ listing }, { req.body }, function(err, listing) {
-  if (err) throw err;
+  //Listing.findOneAndUpdate({ listing }, { req.body }, function(err, listing) {
+  //if (err) throw err; //dont need since this is done by middleware 
 
   // we have the updated user returned to us
-  console.log(listing);
-  });
+  //console.log(listing);
+ // });
 
 
-  if(req.results) {
-    listing.coordinates = {
-      latitude: req.results.lat, 
-      longitude: req.results.lng
-    };
+  listing.name = req.body.name;
+  listing.code = req.body.code;
+
+  if(req.results.coordinates) {
+    listing.address = req.body.address;
+    listing.coordinates.latitude = req.body.coordinates.latitude;
+    listing.coordinates.longitude = req.body.coordinates.longitude;
   }
 
   /* Then save the listing */
-  listing.save(function(err) {
+  listing.save(function(err) { //this is proper
     if(err) {
       console.log(err);
       res.status(400).send(err);
@@ -83,16 +85,17 @@ exports.delete = function(req, res) {/////////////////////////////////
   var listing = req.listing;
 
   /* Remove the article */
-  Listing.find({ listing }, function(err, listing) {
-    if (err) throw err;
+ // Listing.find({ listing }, function(err, listing) { //line not needed, 
+  //  if (err) throw err;
 
     // delete him
-    listing.remove(function(err) {
+    listing.remove(function(err) { //Listing.remove would delete whole listing lol
       if (err) throw err;
 
-      console.log('Listing successfully deleted!');
+      //console.log('Listing successfully deleted!'); //edit line to res
+      res.send('Listing successfully deleted!');
     });
-  });
+ // });
   
 
 
@@ -102,11 +105,13 @@ exports.delete = function(req, res) {/////////////////////////////////
 exports.list = function(req, res) {////////////////////////////////////////////////
   
   // get all the users
-  Listing.find({}, function(err, listing) {
+  Listing.find({}, function(err, listingInfo) { //within function is a created variable for res
     if (err) throw err;
 
     // object of all the users
-    console.log(listing);
+   // console.log(listing); //this prints to terminal, not online
+
+    res.json(listingInfo);  
   });
   
 
