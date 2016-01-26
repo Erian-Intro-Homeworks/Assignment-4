@@ -1,14 +1,14 @@
 
 /* Dependencies */
-var mongoose = require('mongoose'), 
+var mongoose = require('mongoose'),
     Listing = require('../models/listings.server.model.js');
 
 /*
   In this file, you should use Mongoose queries in order to retrieve/add/remove/update listings.
-  On an error you should send a 404 status code, as well as the error message. 
+  On an error you should send a 404 status code, as well as the error message.
   On success (aka no error), you should send the listing(s) as JSON in the response.
 
-  HINT: if you are struggling with implementing these functions, refer back to this tutorial 
+  HINT: if you are struggling with implementing these functions, refer back to this tutorial
   from assignment 3 https://scotch.io/tutorials/using-mongoosejs-in-node-js-and-mongodb-applications
  */
 
@@ -21,7 +21,7 @@ exports.create = function(req, res) {
   /* save the coordinates (located in req.results if there is an address property) */
   if(req.results) {
     listing.coordinates = {
-      latitude: req.results.lat, 
+      latitude: req.results.lat,
       longitude: req.results.lng
     };
   }
@@ -51,17 +51,17 @@ exports.update = function(req, res) {////////////////////////////CHANGE Listing 
   /* save the coordinates (located in req.results if there is an address property) */
   /* Save the article */
 
-  Listing.findOneAndUpdate({ listing }, { req.body }, function(err, listing) {
-  if (err) throw err;
-
-  // we have the updated user returned to us
-  console.log(listing);
-  });
+  // Listing.findOneAndUpdate({ listing }, { req.body }, function(err, listing) {
+  // if (err) throw err;
+  //
+  // // we have the updated user returned to us
+  // console.log(listing);
+  // });
 
 
   if(req.results) {
     listing.coordinates = {
-      latitude: req.results.lat, 
+      latitude: req.results.lat,
       longitude: req.results.lng
     };
   }
@@ -82,42 +82,53 @@ exports.update = function(req, res) {////////////////////////////CHANGE Listing 
 exports.delete = function(req, res) {/////////////////////////////////
   var listing = req.listing;
 
-  /* Remove the article */
-  Listing.find({ listing }, function(err, listing) {
+  listing.remove(function(err){
     if (err) throw err;
 
-    // delete him
-    listing.remove(function(err) {
-      if (err) throw err;
-
-      console.log('Listing successfully deleted!');
-    });
+    res.json(listing);
   });
-  
 
+  /* Remove the article */
+  // Alejandro
+  // Listing.find({ listing }, function(err, listing) {
+  //   if (err) throw err;
+  //
+  //   // delete him
+  //   listing.remove(function(err) {
+  //     if (err) throw err;
+  //
+  //     console.log('Listing successfully deleted!');
+  //   });
+  // });
 
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function(req, res) {////////////////////////////////////////////////
-  
+
   // get all the users
-  Listing.find({}, function(err, listing) {
-    if (err) throw err;
+  // Listing.find({}, function(err, listing) {
+  //   if (err) throw err;
+  //
+  //   // object of all the users
+  //   console.log(listing);
+  // });
 
-    // object of all the users
-    console.log(listing);
+  Listing.find().sort('-name').exec(function (err, listings) {
+    if (err) {
+      res.status(404).send(err);
+    } else {
+      res.json(listings);
+    }
   });
-  
-
 
 };
 
-/* 
-  Middleware: find a listing by its ID, then pass it to the next request handler. 
+/*
+  Middleware: find a listing by its ID, then pass it to the next request handler.
 
-  HINT: Find the listing using a mongoose query, 
-        bind it to the request object as the property 'listing', 
+  HINT: Find the listing using a mongoose query,
+        bind it to the request object as the property 'listing',
         then finally call next
  */
 exports.listingByID = function(req, res, next, id) {
