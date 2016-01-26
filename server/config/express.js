@@ -26,18 +26,32 @@ module.exports.init = function() {
     res.send(req.results);
   });
 
-  /* serve static files */
-  app.use('/static', express.static('public'));
+
+/* serve static files */
+  //app.use('/static', express.static('client'));
 
   /* use the listings router for requests to the api */
-  app.route('/api/listings')
-    .get(listings.list);
+ // app.route('/api/listings')
+   // .get(listings.list);
 
   /* go to homepage for all routes not specified */
-  app.route('/*', function(req, res) {
-    res.redirect('../client/../index.html');
+  //app.route('/*', function(req, res) {
+  //  res.redirect('../client/../index.html');
+ // });
+
+    /* serve static files */
+  app.use(express.static('client'));
+
+  /* use the listings router for requests to the api */
+  app.use('/api/listings', listingsRouter, function(req,res){
+  	res.send(req.results);
   });
+
+  /* go to homepage for all routes not specified */
+  app.all("/*", function(req,res){
+  	res.redirect('/index.html');
+  }); 
 
 
   return app;
-};
+};  

@@ -62,7 +62,7 @@ exports.update = function(req, res) {////////////////////////////CHANGE Listing 
   listing.code = req.body.code;
 
   if(req.results.coordinates) {
-    listing.address = req.body.address;
+    listing.address = req.body.address; //??
     listing.coordinates.latitude = req.body.coordinates.latitude;
     listing.coordinates.longitude = req.body.coordinates.longitude;
   }
