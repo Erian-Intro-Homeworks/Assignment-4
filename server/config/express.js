@@ -1,11 +1,12 @@
-var path = require('path'),  
-    express = require('express'), 
+var path = require('path'),
+    express = require('express'),
     mongoose = require('mongoose'),
     morgan = require('morgan'),
     bodyParser = require('body-parser'),
     config = require('./config'),
-    listingsRouter = require('../routes/listings.server.routes'), 
+    listingsRouter = require('../routes/listings.server.routes'),
     getCoordinates = require('../controllers/coordinates.server.controller.js');
+    listings = require('../controllers/listings.server.controller.js');
 
 module.exports.init = function() {
   //connect to database
@@ -17,7 +18,7 @@ module.exports.init = function() {
   //enable request logging for development debugging
   app.use(morgan('dev'));
 
-  //body parsing middleware 
+  //body parsing middleware
   app.use(bodyParser.json());
 
   /* server wrapper around Google Maps API to get latitude + longitude coordinates from address */
@@ -26,12 +27,17 @@ module.exports.init = function() {
   });
 
   /* serve static files */
-  
+  app.use('/static', express.static('public'));
 
   /* use the listings router for requests to the api */
+  app.route('/api/listings')
+    .get(listings.list);
 
+  /* go to homepage for all routes not specified */
+  app.route('/*', function(req, res) {
+    res.redirect('../client/../index.html');
+  });
 
-  /* go to homepage for all routes not specified */ 
 
   return app;
-};  
+};
