@@ -51,11 +51,9 @@ exports.update = function(req, res) {////////////////////////////CHANGE Listing 
   /* save the coordinates (located in req.results if there is an address property) */
   /* Save the article */
   //Listing.findOneAndUpdate({ listing }, { req.body }, function(err, listing) {
-  //if (err) throw err; //dont need since this is done by middleware 
+  //if (err) throw err; //dont need since this is done by middleware
 
   // we have the updated user returned to us
-  //console.log(listing);
- // });
 
 
   listing.name = req.body.name;
@@ -84,45 +82,21 @@ exports.delete = function(req, res) {/////////////////////////////////
   var listing = req.listing;
 
   /* Remove the article */
- // Listing.find({ listing }, function(err, listing) { //line not needed, 
-  //  if (err) throw err;
-
-    // delete him
-    listing.remove(function(err) { //Listing.remove would delete whole listing lol
-      if (err) throw err;
-
+  listing.remove(function(err) { //Listing.remove would delete whole listing lol
+    if (err) throw err;
       //console.log('Listing successfully deleted!'); //edit line to res
-      res.send('Listing successfully deleted!');
-    });
- // });
-  
-
-  /* Remove the article */
-  // Alejandro
-  // Listing.find({ listing }, function(err, listing) {
-  //   if (err) throw err;
-  //
-  //   // delete him
-  //   listing.remove(function(err) {
-  //     if (err) throw err;
-  //
-  //     console.log('Listing successfully deleted!');
-  //   });
-  // });
-
+    res.send('Listing successfully deleted!');
+  });
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function(req, res) {////////////////////////////////////////////////
-  
+
   // get all the users
   Listing.find({}, function(err, listingInfo) { //within function is a created variable for res
     if (err) throw err;
 
-    // object of all the users
-   // console.log(listing); //this prints to terminal, not online
-
-    res.json(listingInfo);  
+    res.json(listingInfo);
   });
 
 };
